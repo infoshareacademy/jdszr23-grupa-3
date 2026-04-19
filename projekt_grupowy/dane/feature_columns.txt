@@ -26,4 +26,13 @@ momentum_1_4
 momentum_1_8
 units_pct_change_1
 revenue_pct_change_1
+rolling_mean12
+rolling_std12
+is_holiday_week
+category_enc
+trend_slope_4w
+trend_slope_8w
+trend_direction
+min_stock_level
+stock_safe_signal
 category_encoded

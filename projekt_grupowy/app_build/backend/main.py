@@ -288,11 +288,22 @@ async def recommend_inventory(file: UploadFile = File(...)):
         ["_sort", "units_to_order"], ascending=[True, False]
     ).drop("_sort", axis=1)
 
+    # ── NAPRAWA NaN/Inf → JSON compatible ──
+    # NaN i Inf nie są poprawnym JSON-em, zamieniamy na None i 0
+    result = result.replace([np.inf, -np.inf], 0)
+    result = result.where(pd.notna(result), None)  # NaN → None (JSON null)
+
+    # actions_summary też może mieć NaN-y w kluczach jeśli akcja nie była obliczona
+    actions_summary = result["action"].fillna("BRAK_DANYCH").value_counts().to_dict()
+    
+    # total_units_to_order: NaN-safe
+    total_order = result["units_to_order"].fillna(0).sum()
+    
     return {
         "total_products": len(result),
         "known_products": int(recommendations["is_known_product"].sum()),
         "unknown_products": int((~recommendations["is_known_product"]).sum()),
-        "actions_summary": result["action"].value_counts().to_dict(),
-        "total_units_to_order": float(result["units_to_order"].sum()),
+        "actions_summary": actions_summary,
+        "total_units_to_order": float(total_order) if not pd.isna(total_order) else 0.0,
         "recommendations": result.to_dict(orient="records"),
     }

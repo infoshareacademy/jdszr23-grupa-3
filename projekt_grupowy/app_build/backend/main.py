@@ -42,20 +42,20 @@ app.add_middleware(
 inventory_df: Optional[pd.DataFrame] = None
 forecast_df: Optional[pd.DataFrame] = None
 trends_df: Optional[pd.DataFrame] = None
-product_category_map: Optional[pd.DataFrame] = None
+product_lookup: Optional[pd.DataFrame] = None
 metrics: Optional[dict] = None
 
 
 @app.on_event("startup")
 def load_artifacts():
     """Wczytuje wszystkie artefakty z folderu /artifacts przy starcie aplikacji."""
-    global inventory_df, forecast_df, trends_df, product_category_map, metrics
+    global inventory_df, forecast_df, trends_df, product_lookup, metrics
 
     try:
         inventory_df = pd.read_csv(ARTIFACTS_DIR / "inventory_recommendations.csv")
         forecast_df = pd.read_csv(ARTIFACTS_DIR / "forecast_4_weeks.csv")
         trends_df = pd.read_csv(ARTIFACTS_DIR / "trends_summary.csv")
-        product_category_map = pd.read_csv(ARTIFACTS_DIR / "product_category_map.csv")
+        product_lookup = pd.read_csv(ARTIFACTS_DIR / "product_lookup.csv")
 
         # Konwersja dat
         forecast_df["week_start"] = pd.to_datetime(forecast_df["week_start"])
@@ -68,14 +68,14 @@ def load_artifacts():
         else:
             metrics = {}
 
-        print(f"✓ Artefakty wczytane:")
+        print("OK: Artefakty wczytane:")
         print(f"  - inventory_df: {len(inventory_df)} kategorii")
         print(f"  - forecast_df:  {len(forecast_df)} prognoz")
         print(f"  - trends_df:    {len(trends_df)} trendów")
-        print(f"  - product_map:  {len(product_category_map)} produktów")
+        print(f"  - product_lookup:  {len(product_lookup)} produktów")
 
     except FileNotFoundError as e:
-        print(f"⚠ BŁĄD: brak artefaktów! {e}")
+        print(f"BLAD: brak artefaktów! {e}")
         print(f"  Sprawdź czy {ARTIFACTS_DIR} zawiera pliki CSV z notebooka.")
 
 
@@ -137,11 +137,11 @@ def category_detail(name: str):
 @app.get("/categories/{name}/products")
 def category_products(name: str, limit: int = 50):
     """Lista produktów (product_id) w danej kategorii."""
-    if product_category_map is None:
+    if product_lookup is None:
         raise HTTPException(503, "Artefakty nie wczytane")
 
-    products = product_category_map[
-        product_category_map["product_category_name_english"] == name
+    products = product_lookup[
+        product_lookup["category_pl"] == name
     ]
 
     if products.empty:
@@ -191,12 +191,12 @@ async def recommend_inventory(file: UploadFile = File(...)):
         raise HTTPException(400, f"Brakujące kolumny: {missing}")
 
     # ── Mapowanie product_id -> kategoria ──
-    client_data = client_input.merge(product_category_map, on="product_id", how="left")
-    client_data["product_category_name_english"] = (
-        client_data["product_category_name_english"].fillna("unknown")
+    client_data = client_input.merge(product_lookup[["product_id", "category_pl"]], on="product_id", how="left")
+    client_data["category_pl"] = (
+        client_data["category_pl"].fillna("unknown")
     )
     client_data["is_known_product"] = (
-        client_data["product_category_name_english"] != "unknown"
+        client_data["category_pl"] != "unknown"
     )
 
     # ── Globalne średnie dla "unknown" ──
@@ -226,7 +226,7 @@ async def recommend_inventory(file: UploadFile = File(...)):
                 "trend",
             ]
         ],
-        left_on="product_category_name_english",
+        left_on="category_pl",
         right_on="category",
         how="left",
     )
@@ -260,7 +260,7 @@ async def recommend_inventory(file: UploadFile = File(...)):
     # ── Wynik ──
     output_cols = [
         "product_id",
-        "product_category_name_english",
+        "category_pl",
         "data_source",
         "current_stock",
         "forecast_total_4w",
@@ -274,7 +274,7 @@ async def recommend_inventory(file: UploadFile = File(...)):
         "urgency",
     ]
     result = recommendations[output_cols].rename(
-        columns={"product_category_name_english": "category"}
+        columns={"category_pl": "category"}
     )
 
     # Zaokrąglanie

@@ -405,9 +405,30 @@ div[data-testid="stMetric"] > div:nth-child(2) {{
 
 .stSelectbox [data-baseweb="select"] > div,
 .stMultiSelect [data-baseweb="select"] > div {{
-    background: rgba(255,255,255,0.78) !important;
-    border: 1px solid rgba(255,255,255,0.45) !important;
+    background: rgba(255,255,255,0.95) !important;
+    border: 1px solid #cbd5e1 !important;
     border-radius: 12px !important;
+}}
+
+/* Wymuś ciemny tekst wewnątrz selectbox - wartość wybrana */
+.stSelectbox [data-baseweb="select"] *,
+.stMultiSelect [data-baseweb="select"] > div > div > div,
+[data-baseweb="select"] [data-baseweb="tag"] span,
+[data-baseweb="select"] input,
+[data-baseweb="select"] [role="combobox"],
+[data-baseweb="select"] div[id*="select"] {{
+    color: {TEXT_DARK} !important;
+}}
+
+/* Dropdown z opcjami selectboxa */
+[data-baseweb="popover"] li,
+[data-baseweb="popover"] [role="option"] {{
+    color: {TEXT_DARK} !important;
+    background: white !important;
+}}
+
+[data-baseweb="popover"] [role="option"]:hover {{
+    background: #eff6ff !important;
 }}
 
 .stSelectbox label, .stMultiSelect label,
@@ -478,6 +499,12 @@ h5, h6 {{
 
 .stMarkdown p {{
     color: {TEXT_MUTED};
+}}
+
+/* Wymuś ciemny tekst dla pre/code w main content (nie sidebar) */
+.main pre, .main code {{
+    color: {TEXT_DARK} !important;
+    background: #f1f5f9 !important;
 }}
 
 /* ============================================================
@@ -600,6 +627,33 @@ h5, h6 {{
 .js-plotly-plot {{
     border-radius: 20px !important;
     overflow: hidden;
+}}
+
+/* Wymuś ciemny tekst we wszystkich elementach Plotly */
+.js-plotly-plot .plotly text {{
+    fill: {TEXT_DARK} !important;
+}}
+
+.js-plotly-plot .plotly .xtick text,
+.js-plotly-plot .plotly .ytick text {{
+    fill: {TEXT_DARK} !important;
+    font-weight: 500 !important;
+}}
+
+.js-plotly-plot .plotly .xtitle,
+.js-plotly-plot .plotly .ytitle {{
+    fill: {TEXT_DARK} !important;
+    font-weight: 600 !important;
+}}
+
+.js-plotly-plot .plotly .legend text {{
+    fill: {TEXT_DARK} !important;
+    font-weight: 500 !important;
+}}
+
+.js-plotly-plot .plotly .annotation-text,
+.js-plotly-plot .plotly .annotation-text-g text {{
+    fill: {TEXT_DARK} !important;
 }}
 
 /* ============================================================
@@ -1221,11 +1275,15 @@ elif page == "📤 Analiza Twojego magazynu":
         <div style='padding: 18px 22px; background: white; border: 1px solid {BORDER_SOLID};
                     border-left: 4px solid {BLUE}; border-radius: 8px; margin: 16px 0;
                     box-shadow: 0 4px 12px rgba(15,23,42,0.06);'>
-            <strong style='color: {TEXT_DARK};'>📋 Format pliku CSV:</strong>
-            <pre style='background: {LIGHT_BG}; padding: 12px; border-radius: 6px;
-                       margin-top: 10px; color: {BLUE}; font-size: 0.9rem;'>product_id,current_stock
+            <div style='color: #0f172a; font-weight: 700; font-size: 1rem; margin-bottom: 10px;'>
+                📋 Format pliku CSV:
+            </div>
+            <div style='background: #f1f5f9; padding: 14px; border-radius: 6px;
+                       color: #0f172a; font-size: 0.95rem; font-weight: 600;
+                       border: 1px solid #e2e8f0; font-family: "Courier New", monospace;
+                       line-height: 1.6; white-space: pre;'>product_id,current_stock
 abc123def456,150
-def789ghi012,42</pre>
+def789ghi012,42</div>
         </div>
         """,
         unsafe_allow_html=True

@@ -136,7 +136,7 @@ def category_detail(name: str):
 
 @app.get("/categories/{name}/products")
 def category_products(name: str, limit: int = 50):
-    """Lista produktów (product_id) w danej kategorii."""
+    """Lista produktów (product_id, product_name) w danej kategorii."""
     if product_lookup is None:
         raise HTTPException(503, "Artefakty nie wczytane")
 
@@ -147,11 +147,16 @@ def category_products(name: str, limit: int = 50):
     if products.empty:
         raise HTTPException(404, f"Brak produktów w kategorii '{name}'")
 
+    # Pobieramy zarówno product_id jak i product_name_pl
+    subset = products.head(limit)[["product_id", "product_name_pl"]].rename(
+        columns={"product_name_pl": "product_name"}
+    )
+
     return {
         "category": name,
         "total_products": len(products),
         "products_shown": min(limit, len(products)),
-        "products": products.head(limit)["product_id"].tolist(),
+        "products": subset.to_dict(orient="records"),
     }
 
 
@@ -191,9 +196,12 @@ async def recommend_inventory(file: UploadFile = File(...)):
         raise HTTPException(400, f"Brakujące kolumny: {missing}")
 
     # ── Mapowanie product_id -> kategoria ──
-    client_data = client_input.merge(product_lookup[["product_id", "category_pl"]], on="product_id", how="left")
+    client_data = client_input.merge(product_lookup[["product_id", "category_pl", "product_name_pl"]], on="product_id", how="left")
     client_data["category_pl"] = (
         client_data["category_pl"].fillna("unknown")
+    )
+    client_data["product_name_pl"] = (
+        client_data["product_name_pl"].fillna(client_data["product_id"])
     )
     client_data["is_known_product"] = (
         client_data["category_pl"] != "unknown"
@@ -260,6 +268,7 @@ async def recommend_inventory(file: UploadFile = File(...)):
     # ── Wynik ──
     output_cols = [
         "product_id",
+        "product_name_pl",
         "category_pl",
         "data_source",
         "current_stock",
@@ -274,7 +283,7 @@ async def recommend_inventory(file: UploadFile = File(...)):
         "urgency",
     ]
     result = recommendations[output_cols].rename(
-        columns={"category_pl": "category"}
+        columns={"category_pl": "category", "product_name_pl": "product_name"}
     )
 
     # Zaokrąglanie

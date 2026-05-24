@@ -1256,8 +1256,20 @@ elif page == "🔍 Szczegóły kategorii":
                 st.metric("Łącznie produktów", fmt(products["total_products"], 0))
                 st.metric("Wyświetlanych", fmt(products["products_shown"], 0))
             with col2:
-                products_df = pd.DataFrame({"Identyfikator produktu": products["products"]})
-                st.dataframe(products_df, use_container_width=True, height=320, hide_index=True)
+                # products["products"] to teraz lista obiektów {product_id, product_name}
+                products_list = products["products"]
+                if products_list and isinstance(products_list[0], dict):
+                    # Nowy format - lista obiektów
+                    products_df = pd.DataFrame(products_list)
+                    # Zmień kolejność i nazwy kolumn
+                    display_products = pd.DataFrame({
+                        "Nazwa produktu": products_df.get("product_name", products_df.get("product_id", "")),
+                        "Identyfikator": products_df.get("product_id", ""),
+                    })
+                else:
+                    # Backward compat - stary format (lista stringów)
+                    display_products = pd.DataFrame({"Identyfikator": products_list})
+                st.dataframe(display_products, use_container_width=True, height=320, hide_index=True)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -1372,8 +1384,15 @@ def789ghi012,42</div>
                             f"<h4 style='color: {RED};'>🚨 Najpilniejsze do zamówienia (top 10)</h4>",
                             unsafe_allow_html=True
                         )
+                        # Nazwa produktu (po polsku) zamiast hasha
+                        # Fallback: jeśli brak product_name -> użyj product_id
+                        if 'product_name' in urgent.columns:
+                            product_display = urgent['product_name'].fillna(urgent['product_id']).astype(str).str[:40]
+                        else:
+                            product_display = urgent['product_id'].str[:20] + "..."
+
                         urgent_display = pd.DataFrame({
-                            "Produkt": urgent['product_id'].str[:20] + "...",
+                            "Produkt": product_display,
                             "Kategoria": urgent['category'],
                             "Stan": urgent['current_stock'].round(2),
                             "Do zamówienia": urgent['units_to_order'].round(2),
@@ -1424,8 +1443,15 @@ def789ghi012,42</div>
                     & (recs_df["data_source"].isin(source_filter))
                 ].copy()
 
+                # Nazwa produktu - po polsku (fallback do hash gdy brak)
+                if 'product_name' in filtered_recs.columns:
+                    product_name_col = filtered_recs['product_name'].fillna(filtered_recs['product_id'])
+                else:
+                    product_name_col = filtered_recs['product_id']
+
                 display_recs = pd.DataFrame({
-                    "Produkt": filtered_recs['product_id'],
+                    "Produkt": product_name_col,
+                    "Identyfikator": filtered_recs['product_id'],
                     "Kategoria": filtered_recs['category'],
                     "Stan obecny": filtered_recs['current_stock'].round(2),
                     "Prognoza 4 tyg": filtered_recs['forecast_total_4w'].round(2),

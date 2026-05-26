@@ -350,67 +350,37 @@ div[data-testid="stMetric"] > div:nth-child(2) {{
 }}
 
 /* ============================================================
-   TABLES — wymuszenie jasnego motywu (działa na Glide Data Grid)
+   TABLES
 ============================================================ */
 
-.stDataFrame, [data-testid="stDataFrame"] {{
-    background: white !important;
-    border: 1px solid {BORDER_SOLID} !important;
-    border-radius: 12px !important;
+.stDataFrame {{
+    background: rgba(255,255,255,0.78) !important;
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.45) !important;
+    border-radius: 20px !important;
     overflow: hidden !important;
-    box-shadow: 0 4px 12px rgba(15,23,42,0.05);
+    box-shadow:
+        0 10px 30px rgba(15,23,42,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.5);
 }}
 
-/* Glide Data Grid (nowszy Streamlit) - jasny motyw */
-[data-testid="stDataFrame"] > div,
-[data-testid="stDataFrame"] iframe,
-[data-testid="stDataFrame"] canvas {{
-    background: white !important;
-}}
-
-/* Force CSS vars dla Glide Grid */
-[data-testid="stDataFrame"] {{
-    --gdg-bg-cell: #ffffff !important;
-    --gdg-bg-cell-medium: #f8fafc !important;
-    --gdg-bg-header: #f1f5f9 !important;
-    --gdg-bg-header-has-focus: #e0e7ff !important;
-    --gdg-bg-header-hovered: #e2e8f0 !important;
-    --gdg-text-dark: #0f172a !important;
-    --gdg-text-medium: #475569 !important;
-    --gdg-text-light: #64748b !important;
-    --gdg-text-header: #0f172a !important;
-    --gdg-text-header-selected: #ffffff !important;
-    --gdg-bg-search-result: #fef3c7 !important;
-    --gdg-border-color: #e2e8f0 !important;
-    --gdg-horizontal-border-color: #e2e8f0 !important;
-    --gdg-accent-color: {BLUE} !important;
-    --gdg-accent-fg: #ffffff !important;
-    --gdg-accent-light: rgba(59,130,246,0.1) !important;
-    --gdg-link-color: {BLUE} !important;
-    --gdg-cell-horizontal-padding: 8px;
-    --gdg-cell-vertical-padding: 3px;
-    --gdg-header-bottom-border-color: #cbd5e1 !important;
-}}
-
-/* Stara składnia HTML table (backward compat) */
 .stDataFrame thead tr th {{
-    background: #f1f5f9 !important;
+    background: rgba(241,245,249,0.95) !important;
     color: {TEXT_DARK} !important;
     font-weight: 700 !important;
-    border-bottom: 1px solid #cbd5e1 !important;
+    border-bottom: 1px solid rgba(0,0,0,0.04) !important;
 }}
 
 .stDataFrame tbody tr td {{
     color: {TEXT_DARK} !important;
-    background: white !important;
 }}
 
-.stDataFrame tbody tr:nth-child(even) td {{
-    background: #fafbfc !important;
-}}
-
-.stDataFrame tbody tr:hover td {{
+.stDataFrame tbody tr:hover {{
     background: rgba(59,130,246,0.06) !important;
+}}
+
+[data-testid="stDataFrame"] > div {{
+    background: transparent !important;
 }}
 
 /* ============================================================
@@ -450,35 +420,15 @@ div[data-testid="stMetric"] > div:nth-child(2) {{
     color: {TEXT_DARK} !important;
 }}
 
-/* Dropdown z opcjami selectboxa - cały popover container */
-[data-baseweb="popover"] {{
-    z-index: 9999 !important;
-}}
-
-[data-baseweb="popover"] [data-baseweb="menu"],
-[data-baseweb="popover"] ul {{
-    background: white !important;
-    border: 1px solid {BORDER_SOLID} !important;
-    border-radius: 8px !important;
-    box-shadow: 0 8px 24px rgba(15,23,42,0.12) !important;
-    padding: 4px !important;
-}}
-
+/* Dropdown z opcjami selectboxa */
 [data-baseweb="popover"] li,
 [data-baseweb="popover"] [role="option"] {{
     color: {TEXT_DARK} !important;
     background: white !important;
-    padding: 8px 12px !important;
-    border-radius: 6px !important;
 }}
 
-[data-baseweb="popover"] [role="option"]:hover,
-[data-baseweb="popover"] li:hover {{
+[data-baseweb="popover"] [role="option"]:hover {{
     background: #eff6ff !important;
-}}
-
-[data-baseweb="popover"] [aria-selected="true"] {{
-    background: #dbeafe !important;
 }}
 
 .stSelectbox label, .stMultiSelect label,
@@ -518,23 +468,6 @@ label[data-testid="stWidgetLabel"] {{
 
 [data-testid="stFileUploaderDropzone"] {{
     background: rgba(255,255,255,0.5) !important;
-}}
-
-/* Nazwa wgranego pliku - musi być ciemna */
-[data-testid="stFileUploader"] [data-testid="stFileUploaderFileName"],
-[data-testid="stFileUploader"] [data-testid="stFileUploaderFile"] *,
-[data-testid="stFileUploader"] li,
-[data-testid="stFileUploader"] li * {{
-    color: {TEXT_DARK} !important;
-    background: transparent !important;
-}}
-
-/* Container wgranego pliku - dyskretne tło */
-[data-testid="stFileUploader"] li {{
-    background: rgba(241,245,249,0.8) !important;
-    border-radius: 8px !important;
-    padding: 6px 12px !important;
-    margin-top: 6px !important;
 }}
 
 /* ============================================================
@@ -685,43 +618,6 @@ h5, h6 {{
     border-top: 1px solid rgba(255,255,255,0.12);
     position: relative;
     z-index: 2;
-}}
-
-/* ============================================================
-   EXPANDER (st.expander) — wymuś ciemny tekst nagłówka
-============================================================ */
-
-[data-testid="stExpander"] {{
-    background: white !important;
-    border: 1px solid {BORDER_SOLID} !important;
-    border-radius: 12px !important;
-    box-shadow: 0 1px 3px rgba(15,23,42,0.04) !important;
-}}
-
-[data-testid="stExpander"] summary,
-[data-testid="stExpander"] summary p,
-[data-testid="stExpander"] details summary,
-[data-testid="stExpander"] details summary span {{
-    color: {TEXT_DARK} !important;
-    font-weight: 600 !important;
-    font-size: 1rem !important;
-}}
-
-[data-testid="stExpander"] [data-testid="stMarkdownContainer"] p,
-[data-testid="stExpander"] [data-testid="stMarkdownContainer"] li,
-[data-testid="stExpander"] [data-testid="stMarkdownContainer"] strong,
-[data-testid="stExpander"] [data-testid="stMarkdownContainer"] em,
-[data-testid="stExpander"] [data-testid="stMarkdownContainer"] *,
-[data-testid="stExpander"] p,
-[data-testid="stExpander"] li,
-[data-testid="stExpander"] strong,
-[data-testid="stExpander"] ul,
-[data-testid="stExpander"] div p {{
-    color: {TEXT_DARK} !important;
-}}
-
-[data-testid="stExpander"] svg {{
-    fill: {TEXT_DARK} !important;
 }}
 
 /* ============================================================
@@ -1422,14 +1318,8 @@ def789ghi012,42</div>
         if st.button("🚀 Analizuj magazyn i wygeneruj rekomendacje", type="primary"):
             with st.spinner("Analizuję magazyn..."):
                 result = api_post_file("/recommend", uploaded.getvalue(), uploaded.name)
-                if result:
-                    # Zapisz w session_state, żeby przetrwało rerun przy filtrowaniu
-                    st.session_state["last_recommendation"] = result
-                    st.session_state["last_filename"] = uploaded.name
 
-        # Pokaż wyniki niezależnie od button - z session_state
-        result = st.session_state.get("last_recommendation")
-        if result:
+            if result:
                 st.success(f"✓ Przeanalizowano {result['total_products']} produktów")
 
                 col1, col2, col3, col4 = st.columns(4)
@@ -1547,47 +1437,38 @@ def789ghi012,42</div>
                         default=recs_df["data_source"].unique(),
                     )
 
-                # Filtrowanie — pusty filtr = wszystko (nie blokujemy)
-                filter_mask = pd.Series(True, index=recs_df.index)
-                if action_filter:
-                    filter_mask &= recs_df["action"].isin(action_filter)
-                if urgency_filter:
-                    filter_mask &= recs_df["urgency"].isin(urgency_filter)
-                if source_filter:
-                    filter_mask &= recs_df["data_source"].isin(source_filter)
+                filtered_recs = recs_df[
+                    (recs_df["action"].isin(action_filter))
+                    & (recs_df["urgency"].isin(urgency_filter))
+                    & (recs_df["data_source"].isin(source_filter))
+                ].copy()
 
-                filtered_recs = recs_df[filter_mask].copy()
-
-                # Komunikat jeśli filtry zwracają 0 wierszy
-                if filtered_recs.empty:
-                    st.warning("⚠ Brak produktów pasujących do wybranych filtrów. Zmień filtry, żeby zobaczyć wyniki.")
+                # Nazwa produktu - po polsku (fallback do hash gdy brak)
+                if 'product_name' in filtered_recs.columns:
+                    product_name_col = filtered_recs['product_name'].fillna(filtered_recs['product_id'])
                 else:
-                    # Nazwa produktu - po polsku (fallback do hash gdy brak)
-                    if 'product_name' in filtered_recs.columns:
-                        product_name_col = filtered_recs['product_name'].fillna(filtered_recs['product_id'])
-                    else:
-                        product_name_col = filtered_recs['product_id']
+                    product_name_col = filtered_recs['product_id']
 
-                    display_recs = pd.DataFrame({
-                        "Produkt": product_name_col,
-                        "Identyfikator": filtered_recs['product_id'],
-                        "Kategoria": filtered_recs['category'],
-                        "Stan obecny": filtered_recs['current_stock'].round(2),
-                        "Prognoza 4 tyg": filtered_recs['forecast_total_4w'].round(2),
-                        "Bufor": filtered_recs['safety_stock'].round(2),
-                        "Punkt zamówienia": filtered_recs['reorder_point'].round(2),
-                        "Rekomendowany stan": filtered_recs['recommended_stock_4w'].round(2),
-                        "Do zamówienia": filtered_recs['units_to_order'].round(2),
-                        "Trend": filtered_recs['trend'],
-                        "Akcja": filtered_recs['action'],
-                    })
+                display_recs = pd.DataFrame({
+                    "Produkt": product_name_col,
+                    "Identyfikator": filtered_recs['product_id'],
+                    "Kategoria": filtered_recs['category'],
+                    "Stan obecny": filtered_recs['current_stock'].round(2),
+                    "Prognoza 4 tyg": filtered_recs['forecast_total_4w'].round(2),
+                    "Bufor": filtered_recs['safety_stock'].round(2),
+                    "Punkt zamówienia": filtered_recs['reorder_point'].round(2),
+                    "Rekomendowany stan": filtered_recs['recommended_stock_4w'].round(2),
+                    "Do zamówienia": filtered_recs['units_to_order'].round(2),
+                    "Trend": filtered_recs['trend'],
+                    "Akcja": filtered_recs['action'],
+                })
 
-                    st.dataframe(display_recs, use_container_width=True, height=500, hide_index=True)
+                st.dataframe(display_recs, use_container_width=True, height=500, hide_index=True)
 
-                    csv = display_recs.to_csv(index=False, encoding='utf-8').encode("utf-8")
-                    st.download_button(
-                        label="💾 Pobierz raport jako CSV",
-                        data=csv,
-                        file_name=f"raport_magazyn_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
-                        mime="text/csv",
-                    )
+                csv = display_recs.to_csv(index=False, encoding='utf-8').encode("utf-8")
+                st.download_button(
+                    label="💾 Pobierz raport jako CSV",
+                    data=csv,
+                    file_name=f"raport_magazyn_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
+                    mime="text/csv",
+                )
